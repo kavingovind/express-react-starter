@@ -12,17 +12,24 @@ function App() {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    setLoading(true);
-    try {
-      fetch(API_URL)
-        .then((res) => res.json())
-        .then((data: APIResponse) => setData(data))
-        .catch(() => setError(true));
-    } catch (error) {
-      setError(true);
-    }
+    const fetchData = async () => {
+      setLoading(true);
+      setError(false);
 
-    setLoading(false);
+      if (!API_URL) return;
+
+      try {
+        const response = await fetch(API_URL);
+        const data: APIResponse = await response.json();
+        setData(data);
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (loading) {
